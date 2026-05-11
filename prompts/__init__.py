@@ -1,0 +1,16 @@
+# prompts/__init__.py
+from prompts.loader import (
+    MASTER_PROMPT,
+    LOAN_AGENT_PROMPT,
+    CARD_BLOCK_AGENT_PROMPT,
+    LOAN_ELIGIBILITY_PROMPT,
+    LOAN_VERIFICATION_PROMPT,
+)
+
+__all__ = [
+    "MASTER_PROMPT",
+    "LOAN_AGENT_PROMPT",
+    "CARD_BLOCK_AGENT_PROMPT",
+    "LOAN_ELIGIBILITY_PROMPT",
+    "LOAN_VERIFICATION_PROMPT",
+]
