@@ -318,7 +318,7 @@ step 4. Stop
 
 ### Path: Statement Request
 
-**Condition:** `loan_state == disbursed` AND user explicitly requests statement (keywords: "statement", "document", "account statement")
+**Condition:** User explicitly requests statement (keywords: "statement", "document", "account statement", "download statement")
 
 **Action:**
 1. Generate statement

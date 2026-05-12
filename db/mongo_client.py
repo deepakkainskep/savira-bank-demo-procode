@@ -203,6 +203,7 @@ def retrieve_messages(session_id: str, limit: int = 50) -> list[Dict[str, Any]]:
     for d in docs:
         msg = d.get("message", {})
         role = msg.get("type", "").upper()
-        content = msg.get("content", "")
+        # Handle both old and new LangChain serialized schemas
+        content = msg.get("data", {}).get("content") or msg.get("content", "")
         history.append({"role": role, "content": content, "channel": d.get("channel", "")})
     return history

@@ -25,14 +25,24 @@ from prompts.loader import LOAN_ELIGIBILITY_PROMPT
 
 logger = logging.getLogger(__name__)
 
-# ── Build agent ───────────────────────────────────────────────────────────────
+# ── Lazy agent singleton ───────────────────────────────────────────────────────
+# Do NOT build the agent at module level — Azure Functions may import this
+# before environment variables are injected, causing LLM auth failures on
+# cold start. The singleton is created on first actual invocation instead.
+_agent = None
 _TOOLS = [check_loan_eligibility]
 
-_agent = create_react_agent(
-    model=get_sub_agent_llm(),
-    tools=_TOOLS,
-    prompt=LOAN_ELIGIBILITY_PROMPT,
-)
+
+def _get_agent():
+    """Return the cached agent, building it on first call (lazy init)."""
+    global _agent
+    if _agent is None:
+        _agent = create_react_agent(
+            model=get_sub_agent_llm(),
+            tools=_TOOLS,
+            prompt=LOAN_ELIGIBILITY_PROMPT,
+        )
+    return _agent
 
 
 def run_loan_eligibility_agent(epn_number: str) -> Dict[str, Any]:
@@ -46,7 +56,7 @@ def run_loan_eligibility_agent(epn_number: str) -> Dict[str, Any]:
     - raw_response (str)
     """
     logger.info("[LoanEligibilityAgent] Checking eligibility for epn=%s", epn_number)
-    result = _agent.invoke({"messages": [("human", epn_number)]})
+    result = _get_agent().invoke({"messages": [("human", epn_number)]})
     raw = result["messages"][-1].content
 
     # Try to parse structured JSON from response

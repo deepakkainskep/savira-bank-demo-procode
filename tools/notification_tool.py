@@ -118,12 +118,3 @@ def make_notification_tool(user_phone: str = "", user_id: str = ""):
             })
 
     return send_notification
-
-
-# ── Standalone tool (no phone) — fallback when factory not used ───────────────
-@tool
-def send_notification(payload_json: str) -> str:
-    """
-    Send a push notification. Use make_notification_tool() factory for auto phone injection.
-    """
-    return make_notification_tool()(payload_json)

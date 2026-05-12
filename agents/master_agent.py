@@ -49,18 +49,44 @@ def build_master_agent(
     Returns a compiled LangGraph agent (create_react_agent).
     """
     from tools.session_tools import make_session_tools
-    from agents.loan_agent import make_loan_agent_tool
-    from agents.card_block_agent import make_card_block_agent_tool
+    from langchain_core.tools import tool
+    import requests
+    from config import LOAN_AGENT_URL, CARD_BLOCK_AGENT_URL
 
     _, update_session_data_tool = make_session_tools(session_id)
 
-    loan_tool       = make_loan_agent_tool(session_id, identity, user_data, session_data, channel)
-    card_block_tool = make_card_block_agent_tool(session_id, identity, user_data, session_data, channel)
+    @tool("LoanAgent")
+    def loan_http_tool(user_input: str) -> str:
+        """Hand off to the LoanAgent microservice to handle the loan flow."""
+        try:
+            r = requests.post(LOAN_AGENT_URL, json={
+                "session_id": session_id,
+                "identity": identity,
+                "user_input": user_input,
+                "channel": channel
+            }, timeout=60)
+            return r.json().get("response", "Error calling Loan Agent API")
+        except Exception as e:
+            return f"Network Error: {e}"
+
+    @tool("CardBlockAgent")
+    def card_block_http_tool(user_input: str) -> str:
+        """Hand off to the CardBlockAgent microservice to handle blocking cards."""
+        try:
+            r = requests.post(CARD_BLOCK_AGENT_URL, json={
+                "session_id": session_id,
+                "identity": identity,
+                "user_input": user_input,
+                "channel": channel
+            }, timeout=60)
+            return r.json().get("response", "Error calling Card Block Agent API")
+        except Exception as e:
+            return f"Network Error: {e}"
 
     tools = [
         update_session_data_tool,
-        loan_tool,
-        card_block_tool,
+        loan_http_tool,
+        card_block_http_tool,
     ]
 
     agent = create_react_agent(

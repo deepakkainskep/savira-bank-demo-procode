@@ -37,6 +37,10 @@ Loan Intent Keywords:
 - "apply loan"
 - "want loan"
 - "loan amount"
+- "statement"
+- "bank statement"
+- "account statement"
+- "download statement"
 
 ---
 

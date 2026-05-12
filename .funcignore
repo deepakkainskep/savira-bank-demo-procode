@@ -1,0 +1,11 @@
+.venv
+.vscode
+__pycache__
+.git
+.env
+local.settings.json
+tests/
+*.pyc
+streamlit_app.py
+*.md
+!requirements.txt

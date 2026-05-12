@@ -8,8 +8,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ─── Server ───────────────────────────────────────────────────────────────────
+# ─── Server & Distributed Agents ───────────────────────────────────────────────
 SERVER_PORT              = int(os.getenv("SERVER_PORT", "9000"))   # Use 9000 (8000 is reserved by other services)
+
+# Detection for Azure Environment to auto-construct Agent URLs
+hostname = os.getenv("WEBSITE_HOSTNAME")
+base_url = f"https://{hostname}" if hostname else f"http://localhost:{SERVER_PORT}"
+
+LOAN_AGENT_URL           = os.getenv("LOAN_AGENT_URL") or f"{base_url}/agent/loan"
+CARD_BLOCK_AGENT_URL     = os.getenv("CARD_BLOCK_AGENT_URL") or f"{base_url}/agent/card_block"
 
 # ─── Azure OpenAI ────────────────────────────────────────────────────────────
 AZURE_OPENAI_API_KEY     = os.getenv("AZURE_OPENAI_API_KEY", "")

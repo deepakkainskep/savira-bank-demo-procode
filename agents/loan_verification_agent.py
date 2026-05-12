@@ -20,12 +20,23 @@ from prompts.loader import LOAN_VERIFICATION_PROMPT
 
 logger = logging.getLogger(__name__)
 
-# ── Build agent (no tools needed — just LLM + system prompt) ─────────────────
-_agent = create_react_agent(
-    model=get_sub_agent_llm(),
-    tools=[],
-    prompt=LOAN_VERIFICATION_PROMPT,
-)
+# ── Lazy agent singleton ───────────────────────────────────────────────────────
+# Do NOT build the agent at module level — Azure Functions may import this
+# before environment variables are injected, causing LLM auth failures on
+# cold start. The singleton is created on first actual invocation instead.
+_agent = None
+
+
+def _get_agent():
+    """Return the cached agent, building it on first call (lazy init)."""
+    global _agent
+    if _agent is None:
+        _agent = create_react_agent(
+            model=get_sub_agent_llm(),
+            tools=[],
+            prompt=LOAN_VERIFICATION_PROMPT,
+        )
+    return _agent
 
 
 def run_loan_verification_agent(user_message: str) -> str:
@@ -36,7 +47,7 @@ def run_loan_verification_agent(user_message: str) -> str:
     Returns: "YES" or the agent's raw output string.
     """
     logger.info("[LoanVerificationAgent] Verifying ID document")
-    result = _agent.invoke({"messages": [("human", user_message)]})
+    result = _get_agent().invoke({"messages": [("human", user_message)]})
     output = result["messages"][-1].content.strip()
     logger.info("[LoanVerificationAgent] Result: %s", output)
     return output
