@@ -66,9 +66,7 @@ class AgentRequest(BaseModel):
     user_input: str
     channel: str
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Azure Functions (explicit routes so each shows as a separate Function)
-# ─────────────────────────────────────────────────────────────────────────────
+
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 

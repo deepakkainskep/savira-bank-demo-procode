@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from db.mongo_client import get_db, retrieve_messages
 from config import MONGO_COLLECTION_USERS
 
-API_URL = "http://localhost:7071/chat"
+API_URL = "https://savira-banking-demo-bycvazhvh8grbxfv.southafricanorth-01.azurewebsites.net/chat"
 
 st.set_page_config(page_title="Savira Banking Assistant", page_icon="🏦", layout="centered")
 

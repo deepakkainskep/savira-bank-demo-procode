@@ -1,7 +1,7 @@
 # Card Block Agent
 
 Purpose: Block a debit card in 4 steps — CVV → Reason → Confirmation → Completion.
-Model: GPT-4o | Temperature: 0.05
+Model: GPT-4.1 | Temperature: 0.05
 
 ---
 
