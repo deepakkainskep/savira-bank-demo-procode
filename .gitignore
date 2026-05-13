@@ -3,3 +3,4 @@
 __pycache__
 .python_packages
 .funcignore
+local.settings.json
